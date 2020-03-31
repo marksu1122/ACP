@@ -8,111 +8,62 @@ using namespace std;
 int main(){
     int num;
     cin>>num;
-    queue<vector<int> > left;
-    queue<vector<int> > right;
     for(int i=0;i<num;i++){
-        int n,t,m;
-        cin>>n;
-        cin>>t;
-        cin>>m;
-        int ans[m];
-        for(int j=0;j<m;j++){
-            int arrive;
-            string side;
-            cin>>arrive;
-            cin>>side;
-            vector<int> v;
-            v.push_back(arrive);
-            v.push_back(j);
-            if(side == "left"){
-                left.push(v);
-            }else{
-                right.push(v);
-            }
+        int datas;
+        int data;
+        int x,y;
+        int count = 0;
+        vector<int> dataset;
+        cin>>datas;
+        for(int j=0;j<datas;j++){
+            cin>>data;
+            dataset.push_back(data);
         }
-        int time=0;
-        bool flag = true;
-        while(!left.empty()||!right.empty()){
-            if(flag){
-                if(right.empty() && !left.empty()){
-                    if(left.front()[0] >time){
-                         time = left.front()[0];
+        for(int a=0;a<dataset.size();a++){
+            x = dataset[a];
+            for(int b = a+1;b<dataset.size();b++){
+                y = dataset[b];
+                
+                if(x == 0 && y==0){
+                    // Z1 Z2 相加 找 Z3 == 0
+                    count += 2*(dataset.size()-b-1);
+                    for(int c = b+1;c<dataset.size();c++){
+                        if(dataset[c] == 0){
+                            count ++;
+                        }
                     }
-                }else if(!right.empty() && left.empty()){
-                    if(right.front()[0] >time){
-                        time = right.front()[0]+t;
-                    }else{
-                        time +=t;
+                }else if(x == 0){
+                    // Z1 找  y z ==0, Z2 找 y ==0 , Z3找 z ==0
+                    for(int c = b+1;c<dataset.size();c++){
+                        if(y == 0 || dataset[c] == 0){
+                            if(y == 0 && dataset[c] == 0){
+                                count += 3;
+                            }else{
+                                count += 1;
+                            }
+                        }
                     }
-                    flag = false;
-                    continue;
-                }else if(left.front()[0] > time){
-                    if(right.front()[0] <= time){
-                        time += t;
-                        flag = false;
-                        continue;
-                    }else if(right.front()[0]<left.front()[0]){
-                        time = right.front()[0]+t;
-                        flag = false;
-                        continue;
-                    }else{
-                        time = left.front()[0];
+                }else if(y == 0){
+                    // Z1 不用找 不可能, Z2 找 z ==0 , Z3找 z ==0
+                    for(int c = b+1;c<dataset.size();c++){
+                        if(dataset[c] == 0){
+                            count += 2;
+                        }
                     }
-                }
-                for(int i=0;i<n;i++){
-                    if(left.empty() || left.front()[0]>time){
-                        break;
-                    }
-                    ans[left.front()[1]] = time+t;
-                    left.pop();
-                }
-                time += t;
-                flag = false;
-            }else{
-                if(left.empty() && !right.empty()){
-                    if(right.front()[0] >time){
-                         time = right.front()[0];
-                    }
-                }else if(!left.empty() && right.empty()){
-                    if(left.front()[0] >time){
-                        time = left.front()[0]+t;
-                    }else{
-                        time +=t;
-                    }
-                    flag = true;
-                    continue;
-                }else if(right.front()[0] > time){
-                    if(right.front()[0]>time){
-                        if(left.front()[0] <= time){
-                            time += t;
-                            flag = true;
-                            continue;
-                        }else if(left.front()[0]<right.front()[0]){
-                            time = left.front()[0]+t;
-                            flag = true;
-                            continue;
-                        }else{
-                            time = right.front()[0];
+                }else{
+                    for(int c = b+1;c<dataset.size();c++){
+                        int z = dataset[c];
+                        if(x == y*z){
+                            count +=1;
+                        }else if(y == x*z){
+                            count +=1;
+                        }else if(z == x*y){
+                            count +=1;
                         }
                     }
                 }
-                
-                for(int i=0;i<n;i++){
-                    if(right.empty() || right.front()[0]>time){
-                        break;
-                    }
-                    ans[right.front()[1]] = time+t;
-                    right.pop();
-                }
-                time += t;
-                flag = true;
             }
         }
-        for(int i=0;i<m;i++){
-            cout<<ans[i]<<endl;
-        }
-        if(i<num-1){
-            cout<<endl;
-        }
+        cout<<"Case #"<<i+1<<":"<<count<<endl;
     }
 }
